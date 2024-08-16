@@ -1,12 +1,19 @@
 const express = require('express');
 const axios = require('axios');
+const query = require('query');
+const { request } = require('http');
 require('dotenv').config();
 
 const app = express();
 
-const city = 'chennai';
+const city = req.query.body;
 
- const date = '2024-08-16';
+let current= new Date()
+let currentdate = current.getDate();
+let currentmonth = current.getMonth() + 1;
+let currentyear = current.getFullYear();
+
+let date = (`${currentyear}-0${currentmonth}-${currentdate}`)
 
 app.get('/weather', async (req, res) => {
 
@@ -32,19 +39,12 @@ app.get('/weather', async (req, res) => {
       const totalTempNight = NighttimeHours.reduce((acc, hour) => acc + hour.temp, 0);
       const averageTempNight = (totalTempNight / NighttimeHours.length)
   
-  
-    // const tempday = daytimeHours.hourTime;
     const selectedData = {
       address: weatherData.address,
       datetime: filteredDay.datetime,
       description : filteredDay.description,
      Daytimeavg: averageTemp,
      Nighttimeavg: averageTempNight
-    //   days : filteredDay.hours,
-    //   daytimeHours : daytimeHours.map(hour=>({ 
-    //     datetime:hour.datetime,
-    //     temp:hour.temp,
-    //  }))
     };
    res.json(selectedData)
 
