@@ -1,13 +1,11 @@
 const express = require('express');
 const axios = require('axios');
 const query = require('query');
-const { request } = require('http');
 require('dotenv').config();
 
 const app = express();
 
-const city = req.query.body;
-
+const city = 'chennai'
 let current= new Date()
 let currentdate = current.getDate();
 let currentmonth = current.getMonth() + 1;
