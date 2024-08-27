@@ -1,7 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const mongoose = require('mongoose');
-const weatherschema = require('./schema')
+const weatherschema = require('./schema');
 require('dotenv').config();
 
 const app = express();
@@ -13,7 +13,7 @@ mongoose.connect(MONGOURL).then(() => {
 })
 
 const collection = mongoose.model('Weather', weatherschema);
-let Datetime = "2024-08-22"
+let Datetime = new Date().toJSON().slice(0, 10);
 
 let fetchData = async (city, startDate, endDate) => {
   let apiKey = process.env.VISUAL_CROSSING_API_KEY;
@@ -48,7 +48,7 @@ let fetchData = async (city, startDate, endDate) => {
     let humidity = Math.round(humidityNight / nighttimeHours.length);
 
     return {
-      Location: weatherData.address,
+      location: weatherData.address,
       datetime: filteredDay.datetime,
       sunrise: sunrise,
       sunset: sunset,
@@ -59,64 +59,190 @@ let fetchData = async (city, startDate, endDate) => {
   });
 };
 
-app.get('/get', async (req, res) => {
-    let city = req.query.city || 'London';
-    let startDate = req.query.startdate || new Date().toJSON().slice(0, 10);
-    let endDate = req.query.enddate;
-    if (!endDate) {
-      return res.status(400).send('End date is required');
-    }
-    let selectedData = await fetchData(city, startDate, endDate);
-    res.json(selectedData);
-});
-app.post('/post', async (req, res) => {
-      let city = req.query.city || 'London';
-      let startDate = req.query.startdate || new Date().toJSON().slice(0, 10);
-      let endDate = req.query.endDate;
-      if (!endDate) {
-        return res.status(400).send('End date is required');
-      }
-    try{
-      let selectedData = await fetchData(city, startDate, endDate);
+//Get Specific data in weather API
+// app.get('/weather', async (req, res) => {
+//     let city = req.query.city || 'London';
+//     let startDate = req.query.startdate || new Date().toJSON().slice(0, 10);
+//     let endDate = req.query.enddate;
+//     if (!endDate) {
+//       return res.status(400).send('End date is required');
+//     }
+//     let selectedData = await fetchData(city, startDate, endDate);
+//     res.json(selectedData);
+// });
 
-      let weatherDocument = await collection.findOne({ 
-        "weatherReports.datetime": Datetime
+//Create a document and update the new document
+app.post('/weather', async (req, res) => {
+  let city = req?.query?.city ?? 'London';
+  let startDate = req?.query?.startdate ?? new Date().toJSON().slice(0, 10);
+  let endDate = req.query.endDate;
+  if (!endDate) {
+    return res.status(400).send({
+      status: false,
+      message: 'End date is required'
+    });
+  }
+  try {
+    let weatherData = await fetchData(city, startDate, endDate);
+
+    let weatherDocument = await collection.findOne({
+      "weatherReports.datetime": Datetime,
+    })
+    if (!weatherDocument) {
+      weatherDocument = new collection({
+        weatherReports: weatherData
       });
-  
-      if (!weatherDocument) {
-        weatherDocument = new collection({
-          weatherReports: selectedData
-        });
-        await weatherDocument.save();
-        res.status(200).send({
-          status:200,
-          message: 'Weather data created successfully',
-        })
-      } else {
-
-      for (let dayData of selectedData) {
-        let ReportIndex = weatherDocument.weatherReports.findIndex(report => report.datetime === dayData.datetime);
-  
-        if (ReportIndex > -1) {
-          weatherDocument.weatherReports[ReportIndex] = dayData;
+      await weatherDocument.save();
+      res.status(200).send({
+        status: true,
+        message: 'Weather data Saved successfully',
+      })
+    } else {
+      // for (let dayData of selectedData) {
+      //   let ReportIndex = weatherDocument.weatherReports.findIndex(report => report.datetime === dayData.datetime && report.location === dayData.city);
+      weatherData.forEach(dayData => {
+        let weatherIndex = weatherDocument.weatherReports.findIndex(report =>
+          report.datetime === dayData.datetime &&
+          report.location === dayData.location
+        );
+        if (weatherIndex > -1) {
+          weatherDocument.weatherReports[weatherIndex] = dayData;
         } else {
           weatherDocument.weatherReports.push(dayData);
         }
-      }
-      await weatherDocument.save();
-
-      res.status(200).send({
-        status : 200,
-        message: "Data updated successfully",
-      });  
-     } 
-    }catch(err){
-      res.status(400).send({
-        status : 400,
-        message: "Error updating data",
       });
-    }  
+      await weatherDocument.save();
+      res.status(200).send({
+        status: true,
+        message: "Weather Data updated successfully",
+      });
+    }
+  } catch (err) {
+    res.status(400).send({
+      status: false,
+      message: "Error updating weather data",
+    });
+  }
 });
+
+//To get Specific date in mongoDb
+app.get('/weather', async (req, res) => {
+  try {
+    let city = req.query.city + ',UK';
+    let startdate = req?.query?.startdate ?? new Date().toJSON().slice(0, 10);
+    let enddate = req.query.enddate;
+
+    if (!enddate && city) {
+      let weatherDocument = await collection.findOne({
+        "weatherReports.datetime": Datetime
+      });
+      res.status(200).send({
+        status: true,
+        message: 'Weather date retrieve successfully from mongoDB',
+        data : weatherDocument
+      })
+    } else {
+
+      let weatherDocument = await collection.findOne({
+        "weatherReports.datetime": Datetime
+      });
+      let filterdate = weatherDocument.weatherReports.filter(report =>
+        report.datetime >= startdate && report.datetime <= enddate && report.location == city
+      );
+      res.status(200).send({
+        status : true,
+        message : "weather data retrieve successfully for given date and city",
+        Data : filterdate
+      })
+    }
+  } catch (err) {
+  res.status(400).send({
+    status : false ,
+    message : "Error retrieving data",
+  })
+}
+});
+
+app.delete('/weather', async (req, res) => {
+  let weatherid = req.query.id;
+  if (!weatherid) {
+    res.status(400).send({
+      status: false,
+      message: "weatherId is required "
+    })
+  }
+  try {
+    let weatherDocument = await collection.findOne({
+      "weatherReports._id": weatherid
+    });
+    if (!weatherDocument) {
+      return res.status(404).send({
+        status: false,
+        message: "Weather Data not found",
+      });
+    }
+    weatherDocument.weatherReports = weatherDocument.weatherReports.filter(report => report._id.toString() !== weatherid);
+    await weatherDocument.save();
+    res.status(200).send({
+      status: true,
+      message: "Weather Data deleted successfully",
+    });
+  } catch (err) {
+    res.status(400).send({
+      status: false,
+      message: "Error deleting weather report",
+    });
+  }
+});
+
+app.put('/weather', async (req, res) => {
+    // let weatherid = '66cdbfd132e8780b2b934fde';
+    let {_id : weatherid , ...updateData} = req.body
+    if (!weatherid) {
+      return res.status(200).send({
+        status: false,
+        message: "weatherId is required"
+      })
+    }
+    try{
+    // let weatherDocument = await collection.findOneAndUpdate(
+    //    {"weatherReports._id": weatherid}
+    // );
+    // let weatherDocument = await collection.findByIdAndUpdate(weatherid,req.body)
+
+    let weatherDocument = await collection.findOne({
+      "weatherReports._id": weatherid
+    });
+    if (!weatherDocument) {
+      return res.status(404).send({
+        status: false,
+        message: "Weather Data not found",
+      });
+    }
+    // let weatherIndex = weatherDocument.weatherReports.findIndex(report=>report._id.toString() === weatherid);
+    // if (weatherIndex > -1) {
+    //   weatherDocument.weatherReports[weatherIndex] = { ...weatherDocument.weatherReports[weatherIndex], ...req.body };
+    // } else {
+    //   return res.status(404).send({
+    //     status: false,
+    //     message: "Weather Data not found, no updates made",
+    //   });
+    // }
+    res.status(200).send({
+      status: true,
+      message: "Weather Data updated successfully",
+    });
+    await weatherDocument.save()
+
+  } catch (err) {
+    console.log(err)
+    res.status(400).send({
+      status: false,
+      message: "Error updating weather Data"
+    })
+  }
+})
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
