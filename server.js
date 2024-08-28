@@ -59,18 +59,6 @@ let fetchData = async (city, startDate, endDate) => {
   });
 };
 
-//Get Specific data in weather API
-// app.get('/weather', async (req, res) => {
-//     let city = req.query.city || 'London';
-//     let startDate = req.query.startdate || new Date().toJSON().slice(0, 10);
-//     let endDate = req.query.enddate;
-//     if (!endDate) {
-//       return res.status(400).send('End date is required');
-//     }
-//     let selectedData = await fetchData(city, startDate, endDate);
-//     res.json(selectedData);
-// });
-
 //Create a document and update the new document
 app.post('/weather', async (req, res) => {
   let city = req?.query?.city ?? 'London';
