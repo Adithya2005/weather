@@ -17,7 +17,7 @@ mongoose.connect(MONGOURL).then(() => {
 .catch((err) => {
   console.log(err);
 })
-const collection = mongoose.model('Weather', weatherschema);
+const collection = mongoose.model('weathers', weatherschema);
 let Datetime = new Date().toJSON().slice(0, 10);
 
 let fetchData = async (city, startDate, endDate) => {
@@ -156,7 +156,7 @@ app.get('/', async (req, res) => {
 }
 });
 
-app.delete('/weather', async (req, res) => {
+app.delete('/', async (req, res) => {
   let weatherid = req.query.id;
   if (!weatherid) {
     res.status(400).send({
@@ -188,7 +188,7 @@ app.delete('/weather', async (req, res) => {
   }
 });
 
-app.put('/weather', async (req, res) => {
+app.put('/', async (req, res) => {
   try {
       let { _id: weatherid, ...updateData } = req.body;
       
