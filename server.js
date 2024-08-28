@@ -196,52 +196,50 @@ app.delete('/weather', async (req, res) => {
 });
 
 app.put('/weather', async (req, res) => {
-    // let weatherid = '66cdbfd132e8780b2b934fde';
-    let {_id : weatherid , ...updateData} = req.body
-    if (!weatherid) {
-      return res.status(200).send({
-        status: false,
-        message: "weatherId is required"
-      })
-    }
-    try{
-    // let weatherDocument = await collection.findOneAndUpdate(
-    //    {"weatherReports._id": weatherid}
-    // );
-    // let weatherDocument = await collection.findByIdAndUpdate(weatherid,req.body)
-
-    let weatherDocument = await collection.findOne({
-      "weatherReports._id": weatherid
-    });
-    if (!weatherDocument) {
-      return res.status(404).send({
-        status: false,
-        message: "Weather Data not found",
+  try {
+      let { _id: weatherid, ...updateData } = req.body;
+      
+      if (!weatherid) {
+          return res.status(400).send({
+              status: false,
+              message: "weatherId is required"
+          });
+      }
+      let weatherDocument = await collection.findOne({
+          "weatherReports._id": weatherid
       });
-    }
-    // let weatherIndex = weatherDocument.weatherReports.findIndex(report=>report._id.toString() === weatherid);
-    // if (weatherIndex > -1) {
-    //   weatherDocument.weatherReports[weatherIndex] = { ...weatherDocument.weatherReports[weatherIndex], ...req.body };
-    // } else {
-    //   return res.status(404).send({
-    //     status: false,
-    //     message: "Weather Data not found, no updates made",
-    //   });
-    // }
-    res.status(200).send({
-      status: true,
-      message: "Weather Data updated successfully",
-    });
-    await weatherDocument.save()
+
+      if (!weatherDocument) {
+          return res.status(404).send({
+              status: false,
+              message: "Weather Data not found",
+          });
+      }
+      let weatherIndex = weatherDocument.weatherReports.findIndex(report => report._id.toString() === weatherid);
+      if (weatherIndex > -1) {
+          Object.assign(weatherDocument.weatherReports[weatherIndex], updateData);
+
+          await weatherDocument.save();
+
+          return res.status(200).send({
+              status: true,
+              message: "Weather Data updated successfully",
+          });
+      } else {
+          return res.status(404).send({
+              status: false,
+              message: "Weather Data not found, no updates made",
+          });
+      }
 
   } catch (err) {
-    console.log(err)
-    res.status(400).send({
-      status: false,
-      message: "Error updating weather Data"
-    })
+      console.log(err);
+      return res.status(400).send({
+          status: false,
+          message: "Error updating weather data"
+      });
   }
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
