@@ -3,15 +3,20 @@ const axios = require('axios');
 const mongoose = require('mongoose');
 const weatherschema = require('./schema');
 require('dotenv').config();
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const app = express();
 app.use(express.json())
 let MONGOURL = process.env.MONGO_URL;
 let PORT = process.env.PORT;
+
 mongoose.connect(MONGOURL).then(() => {
   console.log("Database connected successfully.");
 })
-
+.catch((err) => {
+  console.log(err);
+})
 const collection = mongoose.model('Weather', weatherschema);
 let Datetime = new Date().toJSON().slice(0, 10);
 
