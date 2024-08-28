@@ -119,7 +119,7 @@ app.post('/', async (req, res) => {
 });
 
 //To get Specific date in mongoDb
-app.get('/', async (req, res) => {
+app.get('/weather', async (req, res) => {
   try {
     let city = req.query.city + ',UK';
     let startdate = req?.query?.startdate ?? new Date().toJSON().slice(0, 10);
@@ -155,6 +155,11 @@ app.get('/', async (req, res) => {
   })
 }
 });
+app.get('/',(req,res)=>{
+  res.json({
+    message : "Weather API is working fine",
+  })
+})
 
 app.delete('/', async (req, res) => {
   let weatherid = req.query.id;
