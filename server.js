@@ -65,7 +65,7 @@ let fetchData = async (city, startDate, endDate) => {
 };
 
 //Create a document and update the new document
-app.post('/', async (req, res) => {
+app.post('/post', async (req, res) => {
   let city = req?.query?.city ?? 'London';
   let startDate = req?.query?.startdate ?? new Date().toJSON().slice(0, 10);
   let endDate = req.query.endDate;
