@@ -148,16 +148,6 @@ app.get('/', async (req, res) => {
         Data : filterdate
       })
     }
-  
-  // let weatherDocument = await collection.findOne({
-  //     "weatherReports.datetime": Datetime
-  //   });
-  //   // console.log("Looking for data with datetime:", Datetime);
-  //   res.status(200).send({
-  //       status: true,
-  //       message: 'Weather date retrieve successfully from mongoDB',
-  //       data : weatherDocument
-  //   })
   } catch (err) {
   res.status(400).send({
     status : false ,
