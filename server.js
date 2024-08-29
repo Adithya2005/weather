@@ -156,7 +156,7 @@ app.get('/', async (req, res) => {
 }
 });
 
-app.delete('/', async (req, res) => {
+app.delete('/delete', async (req, res) => {
   let weatherid = req.query.id;
   if (!weatherid) {
     res.status(400).send({
@@ -188,7 +188,7 @@ app.delete('/', async (req, res) => {
   }
 });
 
-app.put('/', async (req, res) => {
+app.put('/update', async (req, res) => {
   try {
       let { _id: weatherid, ...updateData } = req.body;
       
