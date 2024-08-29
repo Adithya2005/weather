@@ -66,9 +66,9 @@ let fetchData = async (city, startDate, endDate) => {
 
 //Create a document and update the new document
 app.post('/post', async (req, res) => {
-  let city = req?.query?.city ?? 'London';
-  let startDate = req?.query?.startdate ?? new Date().toJSON().slice(0, 10);
-  let endDate = req.query.endDate;
+  let city = req?.body?.location ?? 'London';
+  let startDate = req?.body?.startdate ?? new Date().toJSON().slice(0, 10);
+  let endDate = req.body.enddate;
   if (!endDate) {
     return res.status(400).send({
       status: false,
@@ -89,6 +89,7 @@ app.post('/post', async (req, res) => {
       res.status(200).send({
         status: true,
         message: 'Weather data Saved successfully',
+        data: weatherData
       })
     } else {
       // for (let dayData of selectedData) {
@@ -108,6 +109,7 @@ app.post('/post', async (req, res) => {
       res.status(200).send({
         status: true,
         message: "Weather Data updated successfully",
+        data:weatherData
       });
     }
   } catch (err) {
