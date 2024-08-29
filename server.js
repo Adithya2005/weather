@@ -121,43 +121,43 @@ app.post('/', async (req, res) => {
 //To get Specific date in mongoDb
 app.get('/', async (req, res) => {
   try {
-  //   let city = req.query.city + ',UK';
-  //   let startdate = req?.query?.startdate ?? new Date().toJSON().slice(0, 10);
-  //   let enddate = req.query.enddate;
+    let city = req.query.city + ',UK';
+    let startdate = req?.query?.startdate ?? new Date().toJSON().slice(0, 10);
+    let enddate = req.query.enddate;
 
-  //   if (!enddate && city) {
-  //     let weatherDocument = await collection.findOne({
-  //       "weatherReports.datetime": Datetime
-  //     });
-  //     res.status(200).send({
-  //       status: true,
-  //       message: 'Weather date retrieve successfully from mongoDB',
-  //       data : weatherDocument
-  //     })
-  //   } else {
-
-  //     let weatherDocument = await collection.findOne({
-  //       "weatherReports.datetime": Datetime
-  //     });
-  //     let filterdate = weatherDocument.weatherReports.filter(report =>
-  //       report.datetime >= startdate && report.datetime <= enddate && report.location == city
-  //     );
-  //     res.status(200).send({
-  //       status : true,
-  //       message : "weather data retrieve successfully for given date and city",
-  //       Data : filterdate
-  //     })
-  //   }
-  
-  let weatherDocument = await collection.findOne({
-      "weatherReports.datetime": Datetime
-    });
-    // console.log("Looking for data with datetime:", Datetime);
-    res.status(200).send({
+    if (!enddate && city) {
+      let weatherDocument = await collection.findOne({
+        "weatherReports.datetime": Datetime
+      });
+      res.status(200).send({
         status: true,
         message: 'Weather date retrieve successfully from mongoDB',
         data : weatherDocument
-    })
+      })
+    } else {
+
+      let weatherDocument = await collection.findOne({
+        "weatherReports.datetime": Datetime
+      });
+      let filterdate = weatherDocument.weatherReports.filter(report =>
+        report.datetime >= startdate && report.datetime <= enddate && report.location == city
+      );
+      res.status(200).send({
+        status : true,
+        message : "weather data retrieve successfully for given date and city",
+        Data : filterdate
+      })
+    }
+  
+  // let weatherDocument = await collection.findOne({
+  //     "weatherReports.datetime": Datetime
+  //   });
+  //   // console.log("Looking for data with datetime:", Datetime);
+  //   res.status(200).send({
+  //       status: true,
+  //       message: 'Weather date retrieve successfully from mongoDB',
+  //       data : weatherDocument
+  //   })
   } catch (err) {
   res.status(400).send({
     status : false ,
