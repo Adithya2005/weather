@@ -120,7 +120,7 @@ app.post('/post', async (req, res) => {
   }
 });
 //To get Specific date in mongoDb
-app.get('/', async (req, res) => {
+app.get('/get', async (req, res) => {
   try {
     let city = req.query.city + ',UK';
     let startdate = req?.query?.startdate ?? new Date().toJSON().slice(0, 10);
