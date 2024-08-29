@@ -119,7 +119,6 @@ app.post('/post', async (req, res) => {
     });
   }
 });
-
 //To get Specific date in mongoDb
 app.get('/', async (req, res) => {
   try {
