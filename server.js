@@ -126,7 +126,7 @@ app.get('/get', async (req, res) => {
     let startdate = req?.query?.startdate ?? new Date().toJSON().slice(0, 10);
     let enddate = req.query.enddate;
 
-    if (!enddate && !city) {
+    if (!enddate && city) {
       let weatherDocument = await collection.findOne({
         "weatherReports.datetime": Datetime
       });
