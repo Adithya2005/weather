@@ -126,7 +126,7 @@ app.get('/get', async (req, res) => {
     let startdate = req?.query?.startdate ?? new Date().toJSON().slice(0, 10);
     let enddate = req.query.enddate;
 
-    if (!enddate && city) {
+    if (!enddate && !city) {
       let weatherDocument = await collection.findOne({
         "weatherReports.datetime": Datetime
       });
@@ -218,13 +218,9 @@ app.put('/update', async (req, res) => {
           return res.status(200).send({
               status: true,
               message: "Weather Data updated successfully",
+              Data : weatherDocument
           });
-      } else {
-          return res.status(404).send({
-              status: false,
-              message: "Weather Data not found, no updates made",
-          });
-      }
+      } 
 
   } catch (err) {
       console.log(err);

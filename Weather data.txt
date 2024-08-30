@@ -1,0 +1,292 @@
+POST method :
+ 
+Note :
+ 
+In post method the user gives the city , StartDate and EndDate . The weather data was get using weather API key and filtered data's in fetchData() function and the condition checks that weather data given in Body was existing or not . If not Create a New Document in MongoDB . If data was existing Update the weather data stored in MongoDB. 
+
+
+URL : https://weather-3yvj.onrender.com/post
+
+Request :
+ 
+{
+    "location":"chennai",
+    "enddate":"2024-08-31"
+}
+
+Respond : 
+
+{
+    "status": true,
+    "message": "Weather data Saved successfully",
+    "data": [
+        {
+            "location": "chennai,UK",
+            "datetime": "2024-08-30",
+            "sunrise": "05:57:41",
+            "sunset": "18:21:06",
+            "description": "Cloudy skies throughout the day with a chance of rain throughout the day.",
+            "daytime": [
+                {
+                    "averageTemp": 85,
+                    "conditions": "Rain, Partially cloudy",
+                    "windSpeed": 10.3,
+                    "Humidity": 69
+                }
+            ],
+            "nighttime": [
+                {
+                    "averagetemp": 80,
+                    "condition": "Partially cloudy",
+                    "windspeed": 12.8,
+                    "humidity": 81
+                }
+            ]
+        },
+        {
+            "location": "chennai,UK",
+            "datetime": "2024-08-31",
+            "sunrise": "05:57:43",
+            "sunset": "18:20:27",
+            "description": "Cloudy skies throughout the day with early morning rain.",
+            "daytime": [
+                {
+                    "averageTemp": 84,
+                    "conditions": "Rain, Overcast",
+                    "windSpeed": 12.3,
+                    "Humidity": 67
+                }
+            ],
+            "nighttime": [
+                {
+                    "averagetemp": 82,
+                    "condition": "Rain, Overcast",
+                    "windspeed": 9.8,
+                    "humidity": 69
+                }
+            ]
+        }   
+    ]
+}
+
+................................................................................................
+
+
+GET method : 
+
+Note :
+
+ In get method , the weather data was retrieve from MongoDB that was already stored . The condition checks that city and enddate is given in query or not . If not given It retrieve all data and If city and enddate is given it shows only specific data.
+
+
+URL : https://weather-3yvj.onrender.com/get    (It retrieve all weather data)
+   
+
+Respond : 
+
+{
+    "status": true,
+    "message": "Weather date retrieve successfully from mongoDB",
+    "data": {
+        "_id": "66d158047418b3b358422cb8",
+        "weatherReports": [
+            {
+                "location": "chennai,UK",
+                "datetime": "2024-08-30",
+                "sunrise": "05:57:41",
+                "sunset": "18:21:06",
+                "description": "Cloudy skies throughout the day with a chance of rain throughout the day.",
+                "daytime": [
+                    {
+                        "averageTemp": 85,
+                        "conditions": "Rain, Partially cloudy",
+                        "windSpeed": 10.3,
+                        "Humidity": 69,
+                        "_id": "66d158047418b3b358422cba"
+                    }
+                ],
+                "nighttime": [
+                    {
+                        "averagetemp": 80,
+                        "condition": "Partially cloudy",
+                        "windspeed": 12.8,
+                        "humidity": 81,
+                        "_id": "66d158047418b3b358422cbb"
+                    }
+                ],
+                "_id": "66d158047418b3b358422cb9"
+            },
+            {
+                "location": "chennai,UK",
+                "datetime": "2024-08-31",
+                "sunrise": "05:57:43",
+                "sunset": "18:20:27",
+                "description": "Cloudy skies throughout the day with early morning rain.",
+                "daytime": [
+                    {
+                        "averageTemp": 84,
+                        "conditions": "Rain, Overcast",
+                        "windSpeed": 12.3,
+                        "Humidity": 67,
+                        "_id": "66d158047418b3b358422cbd"
+                    }
+                ],
+                "nighttime": [
+                    {
+                        "averagetemp": 82,
+                        "condition": "Rain, Overcast",
+                        "windspeed": 9.8,
+                        "humidity": 69,
+                        "_id": "66d158047418b3b358422cbe"
+                    }
+                ],
+                "_id": "66d158047418b3b358422cbc"
+            }
+        ],
+        "__v": 1
+    }
+}
+
+
+_________________________________________________
+
+
+URL : https://weather-3yvj.onrender.com/get?city=chennai&enddate=2024-08-30    (it retrieve weather data for only given date and city )
+
+
+Respond : 
+
+{
+    "status": true,
+    "message": "weather data retrieve successfully for given date and city",
+    "Data": [
+        {
+            "location": "chennai,UK",
+            "datetime": "2024-08-30",
+            "sunrise": "05:57:41",
+            "sunset": "18:21:06",
+            "description": "Cloudy skies throughout the day with a chance of rain throughout the day.",
+            "daytime": [
+                {
+                    "averageTemp": 85,
+                    "conditions": "Rain, Partially cloudy",
+                    "windSpeed": 10.3,
+                    "Humidity": 69,
+                    "_id": "66d158047418b3b358422cba"
+                }
+            ],
+            "nighttime": [
+                {
+                    "averagetemp": 80,
+                    "condition": "Partially cloudy",
+                    "windspeed": 12.8,
+                    "humidity": 81,
+                    "_id": "66d158047418b3b358422cbb"
+                }
+            ],
+            "_id": "66d158047418b3b358422cb9"
+        }
+    ]
+}
+
+................................................................................................
+
+PUT method : 
+
+Note : 
+
+In put method , Object ID and update data was get from body . it find the data by object id and update the existing data as per request in body . 
+
+URL : https://weather-3yvj.onrender.com/update
+
+Request : 
+
+{
+            "location": "londan,UK",
+            "datetime": "2024-08-30",
+            "_id": "66d158047418b3b358422cbc"
+}
+
+
+Respond : 
+
+{
+    "status": true,
+    "message": "Weather date updated successfully",
+    "data": {
+        "_id": "66d158047418b3b358422cb8",
+        "weatherReports": [
+            {
+                "location": "chennai,UK",
+                "datetime": "2024-08-30",
+                "sunrise": "05:57:41",
+                "sunset": "18:21:06",
+                "description": "Cloudy skies throughout the day with a chance of rain throughout the day.",
+                "daytime": [
+                    {
+                        "averageTemp": 85,
+                        "conditions": "Rain, Partially cloudy",
+                        "windSpeed": 10.3,
+                        "Humidity": 69,
+                        "_id": "66d158047418b3b358422cba"
+                    }
+                ],
+                "nighttime": [
+                    {
+                        "averagetemp": 80,
+                        "condition": "Partially cloudy",
+                        "windspeed": 12.8,
+                        "humidity": 81,
+                        "_id": "66d158047418b3b358422cbb"
+                    }
+                ],
+                "_id": "66d158047418b3b358422cb9"
+            },
+            {
+                "location": "londan,UK",
+                "datetime": "2024-08-30",
+                "sunrise": "05:57:43",
+                "sunset": "18:20:27",
+                "description": "Cloudy skies throughout the day with early morning rain.",
+                "daytime": [
+                    {
+                        "averageTemp": 84,
+                        "conditions": "Rain, Overcast",
+                        "windSpeed": 12.3,
+                        "Humidity": 67,
+                        "_id": "66d158047418b3b358422cbd"
+                    }
+                ],
+                "nighttime": [
+                    {
+                        "averagetemp": 82,
+                        "condition": "Rain, Overcast",
+                        "windspeed": 9.8,
+                        "humidity": 69,
+                        "_id": "66d158047418b3b358422cbe"
+                    }
+                ],
+                "_id": "66d158047418b3b358422cbc"
+            }
+        ],
+        "__v": 1
+    }
+}
+
+................................................................................................
+
+DELETE method  : 
+
+Note : 
+
+In delete method , the Object ID was get from query . It find the weather data by its Object ID 
+and delete the weather data . 
+
+URL : https://weather-3yvj.onrender.com/delete?id=66d158047418b3b358422cbc
+
+Respond : 
+
+{
+    "status": true,
+    "message": "Weather Data deleted successfully"
+}
